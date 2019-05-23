@@ -61,8 +61,8 @@ class DataTypeFactory(object):
                 if module != None:
                     break
             if import_success == False:
-                print 'Failed to import ' + mod_path
-                print import_error
+                print('Failed to import ' + mod_path)
+                print(import_error)
             datatype_instance = getattr(module, d_datatype.classname)(d_datatype)
             self.datatype_instances[d_datatype.classname] = datatype_instance
         return datatype_instance
@@ -118,7 +118,7 @@ class StringDataType(BaseDataType):
                     query.filter(Exists(field="tiles.data.%s" % (str(node.pk))))
                 else:
                     query.must(match_query)
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def is_a_literal_in_rdf(self):
@@ -188,7 +188,7 @@ class NumberDataType(BaseDataType):
                 else:
                     search_query = Match(field='tiles.data.%s' % (str(node.pk)), query=value['val'], type='phrase_prefix')
                 query.must(search_query)
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def is_a_literal_in_rdf(self):
@@ -236,7 +236,7 @@ class BooleanDataType(BaseDataType):
             if value['val'] != '':
                 term = True if value['val'] == 't' else False
                 query.must(Term(field='tiles.data.%s' % (str(node.pk)), term=term))
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):
@@ -320,7 +320,7 @@ class DateDataType(BaseDataType):
                 else:
                     search_query = Match(field='tiles.data.%s' % (str(node.pk)), query=date_value, type='phrase_prefix')
                 query.must(search_query)
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def after_update_all(self):
@@ -512,7 +512,7 @@ class GeojsonFeatureCollectionDataType(BaseDataType):
             node_data = tile.data[str(node.pk)]
             bounds = self.get_bounds_from_value(node_data)
         except KeyError as e:
-            print e
+            print(e)
         return bounds
 
     def get_bounds_from_value(self, node_data):
@@ -601,7 +601,7 @@ class GeojsonFeatureCollectionDataType(BaseDataType):
 
         try:
             simplification = config['simplification']
-        except KeyError, e:
+        except KeyError as e:
             simplification = 0.3
 
         return {
@@ -1060,7 +1060,7 @@ class FileListDataType(BaseDataType):
                             deleted_file = models.File.objects.get(pk=previously_saved_file["file_id"])
                             deleted_file.delete()
                         except models.File.DoesNotExist:
-                            print 'file does not exist'
+                            print('file does not exist')
 
         files = request.FILES.getlist('file-list_' + str(node.pk), [])
 
@@ -1234,7 +1234,7 @@ class FileListDataType(BaseDataType):
                     file_model.path = file_data
                     file_model.pk = file['file_id']
                     file_model.save()
-                    if file["name"] == file_data.name and 'url' not in file.keys():
+                    if file["name"] == file_data.name and 'url' not in list(file.keys()):
                         file["file_id"] = str(file_model.pk)
                         file["url"] = str(file_model.path.url)
                         file["status"] = 'uploaded'
@@ -1282,7 +1282,7 @@ class DomainDataType(BaseDomainDataType):
     def append_to_document(self, document, nodevalue, nodeid, tile, provisional=False):
         domain_text = None
         for tile in document['tiles']:
-            for k, v in tile.data.iteritems():
+            for k, v in tile.data.items():
                 if v == nodevalue:
                     node = models.Node.objects.get(nodeid=k)
                     domain_text = self.get_option_text(node, v)
@@ -1314,7 +1314,7 @@ class DomainDataType(BaseDomainDataType):
                 else:
                     query.must(search_query)
 
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):
@@ -1365,7 +1365,7 @@ class DomainListDataType(BaseDomainDataType):
     def append_to_document(self, document, nodevalue, nodeid, tile, provisional=False):
         domain_text_values = set([])
         for tile in document['tiles']:
-            for k, v in tile.data.iteritems():
+            for k, v in tile.data.items():
                 if v == nodevalue:
                     node = models.Node.objects.get(nodeid=k)
                     for value in nodevalue:
@@ -1416,7 +1416,7 @@ class DomainListDataType(BaseDomainDataType):
                 else:
                     query.must(search_query)
 
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):
@@ -1440,7 +1440,7 @@ class DomainListDataType(BaseDomainDataType):
 class ResourceInstanceDataType(BaseDataType):
     def get_id_list(self, nodevalue):
         id_list = nodevalue
-        if type(nodevalue) is unicode:
+        if type(nodevalue) is str:
             id_list = [nodevalue]
         return id_list
 
@@ -1454,9 +1454,9 @@ class ResourceInstanceDataType(BaseDataType):
                     resource_document = se.search(index='resources', id=resourceid)
                     resource_names.add(resource_document['_source']['displayname'])
                 except:
-                    print 'resource not available'
+                    print('resource not available')
         else:
-            print 'resource not avalable'
+            print('resource not avalable')
         return resource_names
 
     def validate(self, value, row_number=None, source=''):
@@ -1487,7 +1487,7 @@ class ResourceInstanceDataType(BaseDataType):
     def transform_export_values(self, value, *args, **kwargs):
         result = value
         try:
-            if not isinstance(value, basestring): #change basestring to str in python3
+            if not isinstance(value, str): #change basestring to str in python3
                 result = ",".join(value)
         except:
             pass
@@ -1504,7 +1504,7 @@ class ResourceInstanceDataType(BaseDataType):
                     query.filter(Exists(field="tiles.data.%s" % (str(node.pk))))
                 else:
                     query.must(search_query)
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):

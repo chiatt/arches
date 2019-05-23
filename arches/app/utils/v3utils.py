@@ -10,7 +10,7 @@ def get_v3_config_info(v3_data_dir, v4_graph_name=None):
         v3_config = json.loads(openfile.read())
 
     # prepend the full paths to the lookup files
-    for k, conf in v3_config.iteritems():
+    for k, conf in v3_config.items():
 
         conf["v3_nodes_csv"] = os.path.join(v3_data_dir, "graph_data",
                                             conf["v3_nodes_csv"])
@@ -31,12 +31,12 @@ def test_rm_configs(v3_data_dir):
         os.path.dirname(v3_data_dir), "graphs", "resource_models"
     )
     errors = []
-    for rm, conf in configs.iteritems():
-        print rm
+    for rm, conf in configs.items():
+        print(rm)
         graph_file_path = os.path.join(v4_rm_dir, rm+".json")
         if not os.path.isfile(graph_file_path):
             errors.append("Missing graph json: "+graph_file_path)
-        for k, v in conf.iteritems():
+        for k, v in conf.items():
             if k == "v3_entitytypeid":
                 continue
             if not os.path.isfile(v):
@@ -55,7 +55,7 @@ def count_tiles_and_values(resource_instance_id):
 
     value_ct = 0
     for tile in tiles:
-        for k, v in tile.data.iteritems():
+        for k, v in tile.data.items():
             if not v:
                 continue
             if isinstance(v, list):

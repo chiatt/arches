@@ -2,7 +2,7 @@ import sys
 import os
 import subprocess
 import shutil
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import zipfile
 import datetime
 from arches import settings
@@ -80,15 +80,15 @@ def activate_env(path_to_virtual_env):
         activate_this = os.path.join(path_to_virtual_env, 'Scripts', 'activate_this.py')
     else:
         activate_this = os.path.join(path_to_virtual_env, 'bin', 'activate_this.py')
-    execfile(activate_this, dict(__file__=activate_this))
+    exec(compile(open(activate_this, "rb").read(), activate_this, 'exec'), dict(__file__=activate_this))
 
 # INSTALL ELASTICSEARCH and HEAD plugin
 def download_file(url, file_name):
-    u = urllib2.urlopen(url)
+    u = urllib.request.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
-    print "Downloading: %s Bytes: %s" % (file_name, file_size)
+    print("Downloading: %s Bytes: %s" % (file_name, file_size))
 
     file_size_dl = 0
     block_sz = 8192
@@ -101,13 +101,13 @@ def download_file(url, file_name):
         f.write(buffer)
         status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
-        print status,
+        print(status, end=' ')
 
     f.close()
 
 def unzip_file(file_name, unzip_location):
     with zipfile.ZipFile(file_name, 'r') as myzip:
-        print 'unzipping %s to: %s' % (file_name, unzip_location)
+        print('unzipping %s to: %s' % (file_name, unzip_location))
         myzip.extractall(unzip_location)
 
 def download_elasticsearch(install_dir):
@@ -175,8 +175,8 @@ def get_complete_version(version=None):
 def get_changeset(path_to_file=None):
     import os
     import subprocess
-    from StringIO import StringIO
-    from management.commands.utils import write_to_file
+    from io import StringIO
+    from .management.commands.utils import write_to_file
 
     sb = StringIO()
     if not path_to_file:

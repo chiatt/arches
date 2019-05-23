@@ -49,10 +49,10 @@ class Command(BaseCommand):
             if os.path.basename(module) != '__init__.py':
                 try:
                     management.call_command(cmd, 'register', source=module)
-                    print('registring', module)
+                    print(('registring', module))
                 except IntegrityError as e:
                     management.call_command(cmd, 'update', source=module)
-                    print('updating', module)
+                    print(('updating', module))
                     print(e)
 
 

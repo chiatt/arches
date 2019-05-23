@@ -65,19 +65,19 @@ class Command(BaseCommand):
             try:
                 dir_path = settings.PACKAGE_DIR
                 if not os.path.isdir(dir_path):
-                    print "\nCurrent PACKAGE_DIR value: "+settings.PACKAGE_DIR
-                    print "This directory does not exist."
+                    print("\nCurrent PACKAGE_DIR value: "+settings.PACKAGE_DIR)
+                    print("This directory does not exist.")
                     raise AttributeError
             except AttributeError:
-                print "\nYou must correctly set PACKAGE_DIR in your project's "\
+                print("\nYou must correctly set PACKAGE_DIR in your project's "\
                     "settings.py file, or use the -t/--target argument to indicate"\
-                    " the location of your package."
+                    " the location of your package.")
                 exit()
         else:
             dir_path = os.path.abspath(options['target'])
             if not os.path.isdir(dir_path):
-                print "\nInvalid -t/--target value: "+options['target']+"\n"\
-                    "This must be a directory."
+                print("\nInvalid -t/--target value: "+options['target']+"\n"\
+                    "This must be a directory.")
                 exit()
 
         op = options['operation']
@@ -108,7 +108,7 @@ class Command(BaseCommand):
                     try:
                         graph = Graph.objects.get(name=rm)
                     except Graph.DoesNotExist:
-                        print "invalid resource model name:", rm
+                        print("invalid resource model name:", rm)
                         exit()
                 models = resource_models
 
@@ -141,21 +141,21 @@ class Command(BaseCommand):
             try:
                 shutil.rmtree(v3_dir)
             except Exception as e:
-                print e
+                print(e)
                 exit()
         elif os.path.isfile(v3_dir) and overwrite:
             try:
                 os.remove(v3_dir)
             except Exception as e:
-                print e
+                print(e)
                 exit()
         elif os.path.isdir(v3_dir) or os.path.isfile(v3_dir):
-            print "The v3data directory already exists at this location:\n    "\
+            print("The v3data directory already exists at this location:\n    "\
                 + v3_dir + "\nEither change your path, or re-run command with "\
-                "--overwrite to replace the existing file or directory."
+                "--overwrite to replace the existing file or directory.")
             exit()
 
-        print "making directory"
+        print("making directory")
 
         os.mkdir(v3_dir)
         os.mkdir(os.path.join(v3_dir, 'business_data'))
@@ -190,21 +190,21 @@ class Command(BaseCommand):
         with open(config_file, "rb") as openfile:
             configs = json.load(openfile)
 
-        for rm, config in configs.iteritems():
+        for rm, config in configs.items():
             v3_type = config['v3_entitytypeid']
             if v3_type.startswith("<") or v3_type.endswith(">"):
-                print "you must fill out the 'v3_entitytypeid' attribute "\
-                    "for every resource model listed in your v3 configs."
+                print("you must fill out the 'v3_entitytypeid' attribute "\
+                    "for every resource model listed in your v3 configs.")
                 exit()
         csv_dir = os.path.join(path, 'v3data', 'graph_data')
 
-        for rm, config in configs.iteritems():
+        for rm, config in configs.items():
             v3_type = config['v3_entitytypeid']
             csv_file = os.path.join(csv_dir, "{}_nodes.csv".format(v3_type))
             if not os.path.isfile(csv_file):
-                print "\nCan't find nodes CSV file for {}. Expected name is:"\
-                    "\n\n  {}".format(v3_type, csv_file)
-                print "\n  -- Have you transferred your v3 nodes files yet?"
+                print("\nCan't find nodes CSV file for {}. Expected name is:"\
+                    "\n\n  {}".format(v3_type, csv_file))
+                print("\n  -- Have you transferred your v3 nodes files yet?")
                 exit()
 
             v3_business_nodes = []
@@ -237,12 +237,12 @@ class Command(BaseCommand):
         v3_data_dir = os.path.join(package_dir, "v3data")
         errors = v3utils.test_rm_configs(v3_data_dir)
         if len(errors) > 0:
-            print "FAIL"
+            print("FAIL")
             for e in errors:
-                print e
+                print(e)
             exit()
 
-        print "PASS"
+        print("PASS")
 
     def write_v4_json(self, package_dir, resource_models,
                       direct_import=False, truncate=None, verbose=False, exclude=[], only=[]):
@@ -252,19 +252,19 @@ class Command(BaseCommand):
 
         v3_files = glob(os.path.join(package_dir, 'v3data', 'business_data', '*.json'))
         if len(v3_files) == 0:
-            print "\nThere is no v3 data to import. Put v3 json in {}".format(v3_data_dir)
+            print("\nThere is no v3 data to import. Put v3 json in {}".format(v3_data_dir))
             exit()
 
         business_data = v3_files[0]
 
         if len(v3_files) > 1:
-            print "\nOnly one v3 file can be imported. This file will be used"\
-                ":\n\n  {}".format(business_data)
+            print("\nOnly one v3 file can be imported. This file will be used"\
+                ":\n\n  {}".format(business_data))
 
         sources = []
         for rm in resource_models:
 
-            print rm
+            print(rm)
             output_file = os.path.join(package_dir, 'business_data', rm+".json")
             importer = v3Importer(v3_data_dir, rm, business_data,
                                   truncate=truncate, exclude=exclude, only=only)
@@ -282,7 +282,7 @@ class Command(BaseCommand):
                                         )
 
         else:
-            print endmsg+"\n"
+            print(endmsg+"\n")
 
     def write_v4_relations(self, package_dir, direct_import=False):
 
@@ -290,21 +290,21 @@ class Command(BaseCommand):
         v3_relations_files = glob(os.path.join(v3_business_dir, '*.relations'))
 
         if len(v3_relations_files) == 0:
-            print "\nThere are no v3 relations to import. Put v3 .relations "\
-                "file in {}".format(v3_business_dir)
+            print("\nThere are no v3 relations to import. Put v3 .relations "\
+                "file in {}".format(v3_business_dir))
             exit()
 
         v3_relations = v3_relations_files[0]
 
         if len(v3_relations_files) > 1:
-            print "\nOnly one v3 relations file can be imported. This file will be used"\
-                ":\n\n  {}".format(v3_relations)
+            print("\nOnly one v3 relations file can be imported. This file will be used"\
+                ":\n\n  {}".format(v3_relations))
 
         v4_relations = os.path.join(package_dir, "business_data", "relations", "all.relations")
 
         with open(v3_relations, "rb") as openv3:
             reader = csv.reader(openv3, delimiter="|")
-            reader.next()
+            next(reader)
             with open(v4_relations, "wb") as openv4:
                 writer = csv.writer(openv4)
                 writer.writerow(['resourceinstanceidfrom', 'resourceinstanceidto',
@@ -319,9 +319,9 @@ class Command(BaseCommand):
                                     source=v4_relations
                                     )
         else:
-            print '\n  -- You can load these resources later with:\n'\
+            print('\n  -- You can load these resources later with:\n'\
                 '\n  python manage.py packages -o import_business_data_relations -s '\
-                '"{}"'.format(v4_relations)
+                '"{}"'.format(v4_relations))
 
     def convert_v3_skos(self, package_dir, direct_import=False):
 
@@ -333,8 +333,8 @@ class Command(BaseCommand):
             with open(uuid_collection_file, "rb") as openfile:
                 data = json.loads(openfile.read())
         except ValueError as e:
-            print "\n  -- JSON parse error in " + uuid_collection_file +\
-                ":\n\n    " + e.message
+            print("\n  -- JSON parse error in " + uuid_collection_file +\
+                ":\n\n    " + e.message)
             exit()
 
         v3_ref_dir = os.path.join(package_dir, 'v3data', 'reference_data')
@@ -342,16 +342,16 @@ class Command(BaseCommand):
 
         v3_skos_files = glob(os.path.join(v3_ref_dir, '*.xml'))
         if len(v3_skos_files) == 0:
-            print "\nThere is no v3 data to import. Export your concept scheme"\
-                " from v3 and place it in {}".format(v3_ref_dir)
+            print("\nThere is no v3 data to import. Export your concept scheme"\
+                " from v3 and place it in {}".format(v3_ref_dir))
             exit()
 
         if len(v3_skos_files) > 0:
             skos_file = v3_skos_files[0]
 
         if len(v3_skos_files) > 1:
-            print "\nOnly one v3 file can be converted. This file will be used"\
-                ":\n\n  {}".format(skos_file)
+            print("\nOnly one v3 file can be converted. This file will be used"\
+                ":\n\n  {}".format(skos_file))
 
         skos_importer = v3SkosConverter(skos_file,
                                         name_space=settings.ARCHES_NAMESPACE_FOR_DATA_EXPORT)

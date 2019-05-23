@@ -6,7 +6,7 @@ import subprocess
 import glob
 import uuid
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os
 from arches.app.search.mappings import prepare_terms_index, prepare_concepts_index, prepare_resource_relations_index
 from arches.setup import get_elasticsearch_download_url, download_elasticsearch, unzip_file
@@ -191,7 +191,7 @@ class Command(BaseCommand):
             help='used to force a yes answer to any user input "continue? y/n" prompt')
 
     def handle(self, *args, **options):
-        print('operation: ' + options['operation'])
+        print(('operation: ' + options['operation']))
         package_name = settings.PACKAGE_NAME
 
         if options['operation'] == 'setup':
@@ -323,7 +323,7 @@ class Command(BaseCommand):
         existing_resource_graphs = {}
         existing_resource_graph_paths = glob.glob(os.path.join(dest_dir, '*.json'))
         for existing_graph_file in existing_resource_graph_paths:
-            print('reading', existing_graph_file)
+            print(('reading', existing_graph_file))
             with open(existing_graph_file, 'r') as f:
                 existing_graph = json.loads(f.read())
                 if 'graph' in existing_graph:
@@ -343,18 +343,18 @@ class Command(BaseCommand):
                 if graph['graphid'] not in existing_resource_graphs:
                     output_file = os.path.join(dest_dir, graph['name'] + '.json')
                     with open(output_file, 'w') as f:
-                        print('writing', output_file)
+                        print(('writing', output_file))
                         f.write(graph_json)
                 else:
                     output_file = existing_resource_graphs[graph['graphid']]['path']
                     if force is False:
-                        overwrite = raw_input('"{0}" already exists in this directory. \
+                        overwrite = input('"{0}" already exists in this directory. \
                         Overwrite? (Y/N): '.format(existing_resource_graphs[graph['graphid']]['name']))
                     else:
                         overwrite = 'true'
                     if overwrite.lower() in ('t', 'true', 'y', 'yes'):
                         with open(output_file, 'w') as f:
-                            print('writing', output_file)
+                            print(('writing', output_file))
                             f.write(graph_json)
 
     def export_package_settings(self, dest_dir, force=False):
@@ -363,7 +363,7 @@ class Command(BaseCommand):
         packages_package_settings_file = os.path.join(dest_dir, 'package_settings.py')
         if os.path.exists(projects_package_settings_file):
             if os.path.exists(packages_package_settings_file) and force is False:
-                resp = raw_input('"{0}" already exists in this directory.\
+                resp = input('"{0}" already exists in this directory.\
                     Overwrite? (Y/N): '.format('package_settings.py'))
                 if resp.lower() in ('t', 'true', 'y', 'yes'):
                     overwrite = True
@@ -396,7 +396,7 @@ class Command(BaseCommand):
                         details = json.load(f)
                         if 'widgetid' not in details:
                             widget_instance = models.Widget.objects.get(name=details['name'])
-                            details['widgetid'] = unicode(widget_instance.widgetid)
+                            details['widgetid'] = str(widget_instance.widgetid)
                             f.close()
                             with open(widget_config_file, 'w') as of:
                                 json.dump(details, of, sort_keys=True, indent=4)
@@ -415,9 +415,9 @@ class Command(BaseCommand):
 
     def create_package(self, dest_dir):
         if os.path.exists(dest_dir):
-            print('Cannot create package', dest_dir, 'already exists')
+            print(('Cannot create package', dest_dir, 'already exists'))
         else:
-            print('Creating template package in', dest_dir)
+            print(('Creating template package in', dest_dir))
             dirs = [
                 'business_data',
                 'business_data/files',
@@ -447,7 +447,7 @@ class Command(BaseCommand):
             for directory in dirs:
                 if len(glob.glob(os.path.join(dest_dir, directory, '*'))) == 0:
                     with open(os.path.join(dest_dir, directory, '.gitkeep'), 'w'):
-                        print('added', os.path.join(dest_dir, directory, '.gitkeep'))
+                        print(('added', os.path.join(dest_dir, directory, '.gitkeep')))
 
             self.export_package_configs(dest_dir)
             self.export_resource_graphs(os.path.join(dest_dir, 'graphs', 'resource_models'), 'true')
@@ -468,7 +468,7 @@ class Command(BaseCommand):
             update_system_settings = True
             if os.path.exists(settings.SYSTEM_SETTINGS_LOCAL_PATH):
                 if yes is False:
-                    response = raw_input(
+                    response = input(
                         'Overwrite current system settings with package settings? (Y/N): ')
                     if response.lower() in ('t', 'true', 'y', 'yes'):
                         update_system_settings = True
@@ -488,7 +488,7 @@ class Command(BaseCommand):
                 update_package_settings = True
                 if os.path.exists(os.path.join(settings.APP_ROOT, 'package_settings.py')):
                     if yes is False:
-                        response = raw_input('Overwrite current packages_settings.py? (Y/N): ')
+                        response = input('Overwrite current packages_settings.py? (Y/N): ')
                         if response.lower() not in ('t', 'true', 'y', 'yes'):
                             update_package_settings = False
                     if update_package_settings is True \
@@ -714,7 +714,7 @@ class Command(BaseCommand):
 
             try:
                 zip_file = os.path.join(unzip_into_dir, "source_data.zip")
-                urllib.urlretrieve(source, zip_file)
+                urllib.request.urlretrieve(source, zip_file)
                 unzip_file(zip_file, unzip_into_dir)
             except Exception as e:
                 pass
@@ -943,8 +943,8 @@ class Command(BaseCommand):
                 data = resource_exporter.export(graph_id=graph, resourceinstanceids=None)
             except MissingGraphException as e:
 
-                print(utils.print_message(
-                    'No resource graph specified. Please rerun this command with the \'-g\' parameter populated.'))
+                print((utils.print_message(
+                    'No resource graph specified. Please rerun this command with the \'-g\' parameter populated.')))
 
                 sys.exit()
 
@@ -980,7 +980,7 @@ class Command(BaseCommand):
         if data_source == '':
             data_source = settings.BUSINESS_DATA_FILES
 
-        if isinstance(data_source, basestring):
+        if isinstance(data_source, str):
             data_source = [data_source]
 
         create_collections = False
@@ -997,7 +997,7 @@ class Command(BaseCommand):
             for source in data_source:
                 path = utils.get_valid_path(source)
                 if path is not None:
-                    print('Importing {0}. . .'.format(path))
+                    print(('Importing {0}. . .'.format(path)))
                     BusinessDataImporter(path, config_file).import_business_data(
                         overwrite=overwrite,
                         bulk=bulk_load,
@@ -1023,7 +1023,7 @@ class Command(BaseCommand):
                 'No overwrite option indicated. Please rerun command with \'-ow\' parameter.')
             sys.exit()
 
-        if isinstance(data_source, basestring):
+        if isinstance(data_source, str):
             data_source = [data_source]
 
         if len(data_source) > 0:
@@ -1048,7 +1048,7 @@ class Command(BaseCommand):
         """
         Imports business data relations
         """
-        if isinstance(data_source, basestring):
+        if isinstance(data_source, str):
             data_source = [data_source]
 
         for path in data_source:
@@ -1074,7 +1074,7 @@ class Command(BaseCommand):
         if data_source == '':
             data_source = settings.RESOURCE_GRAPH_LOCATIONS
 
-        if isinstance(data_source, basestring):
+        if isinstance(data_source, str):
             data_source = [data_source]
 
         for path in data_source:
@@ -1190,7 +1190,7 @@ class Command(BaseCommand):
                         tileserver_layer.map_source = map_source
                         tileserver_layer.save()
                     except IntegrityError as e:
-                        print("Cannot save tile server layer: {0} already exists".format(layer_name))
+                        print(("Cannot save tile server layer: {0} already exists".format(layer_name)))
 
     def add_mapbox_layer(self, layer_name=False, mapbox_json_path=False, layer_icon='fa fa-globe', is_basemap=False):
         if layer_name is not False and mapbox_json_path is not False:
@@ -1200,7 +1200,7 @@ class Command(BaseCommand):
                     for layer in data['layers']:
                         if 'source' in layer:
                             layer['source'] = layer['source'] + '-' + layer_name
-                    for source_name, source_dict in data['sources'].iteritems():
+                    for source_name, source_dict in data['sources'].items():
                         map_source = models.MapSource.objects.get_or_create(
                             name=source_name + '-' + layer_name, source=source_dict)
                     map_layer = models.MapLayer(
@@ -1208,7 +1208,7 @@ class Command(BaseCommand):
                     try:
                         map_layer.save()
                     except IntegrityError as e:
-                        print("Cannot save layer: {0} already exists".format(layer_name))
+                        print(("Cannot save layer: {0} already exists".format(layer_name)))
 
     def delete_tileserver_layer(self, layer_name=False):
         if layer_name is not False:
@@ -1223,7 +1223,7 @@ class Command(BaseCommand):
             try:
                 mapbox_layer = models.MapLayer.objects.get(name=layer_name)
             except ObjectDoesNotExist:
-                print("error: no mapbox layer named \"{}\"".format(layer_name))
+                print(("error: no mapbox layer named \"{}\"".format(layer_name)))
                 return
             all_sources = [i.get('source') for i in mapbox_layer.layerdefinitions]
             # remove duplicates and None
@@ -1249,7 +1249,7 @@ class Command(BaseCommand):
             utils.print_message(
                 'No data source indicated. Please rerun command with \'-s\' parameter.')
 
-        if isinstance(source, basestring):
+        if isinstance(source, str):
             source = [source]
 
         for path in source:

@@ -48,9 +48,9 @@ from arches.app.utils.permission_backend import get_nodegroups_by_perm
 
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 class SearchView(MapBaseManagerView):
 
@@ -521,7 +521,7 @@ def build_search_results_dsl(request):
         grouped_queries = [grouped_query]
         for index, advanced_filter in enumerate(advanced_filters):
             tile_query = Bool()
-            for key, val in advanced_filter.iteritems():
+            for key, val in advanced_filter.items():
                 if key != 'op':
                     node = models.Node.objects.get(pk=key)
                     if request.user.has_perm('read_nodegroup', node.nodegroup):

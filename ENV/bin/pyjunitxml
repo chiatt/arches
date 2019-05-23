@@ -1,0 +1,7 @@
+#!/Users/angiewong/arches/ENV/bin/python2.7
+
+"""Script to run unit tests under junitxml."""
+
+if __name__ == '__main__':
+    import junitxml.main
+    junitxml.main.main()

@@ -118,7 +118,7 @@ class ConceptDataType(BaseConceptDataType):
                 else:
                     query.must(match_query)
 
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):
@@ -196,9 +196,9 @@ class ConceptDataType(BaseConceptDataType):
                 concept_id = hits[0].concept_id
                 # Still need to find the label or prefLabel for this concept
             else:
-                print("ERROR: Multiple hits for {0} external identifier in RDM:".format(concept_uri))
+                print(("ERROR: Multiple hits for {0} external identifier in RDM:".format(concept_uri)))
                 for hit in hits:
-                    print("ConceptValue {0}, Concept {1} - '{2}'".format(hit.valueid, hit.conceptid, hit.value))
+                    print(("ConceptValue {0}, Concept {1} - '{2}'".format(hit.valueid, hit.conceptid, hit.value)))
 
         # print("Trying to get a label from the concept node.")
         if label_node:
@@ -286,7 +286,7 @@ class ConceptListDataType(BaseConceptDataType):
                 else:
                     query.must(match_query)
 
-        except KeyError, e:
+        except KeyError as e:
             pass
 
     def to_rdf(self, edge_info, edge):

@@ -4,7 +4,7 @@ import json
 import uuid
 import datetime
 from django.core.urlresolvers import reverse
-from format import Writer, Reader
+from .format import Writer, Reader
 from arches.app.models import models
 from arches.app.models.resource import Resource
 from arches.app.models.graph import Graph as GraphProxy
@@ -19,9 +19,9 @@ from rdflib.namespace import RDF, RDFS
 from pyld.jsonld import compact, frame, from_rdf, to_rdf, expand
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class RdfWriter(Writer):
@@ -124,7 +124,7 @@ class RdfWriter(Writer):
             graph += dt.to_rdf(pkg, edge)
 
 
-        for resourceinstanceid, tiles in self.resourceinstances.iteritems():
+        for resourceinstanceid, tiles in self.resourceinstances.items():
             graph_info = get_graph_parts(self.graph_id)
 
             # add the edges for the group of nodes that include the root (this group of nodes has no nodegroup)
@@ -203,7 +203,7 @@ class JsonLdWriter(RdfWriter):
         # simulate omitGraph:
         if '@graph' in js and len(js['@graph']) == 1:
             # merge up
-            for (k, v) in js['@graph'][0].items():
+            for (k, v) in list(js['@graph'][0].items()):
                 js[k] = v
             del js['@graph']
 
@@ -308,7 +308,7 @@ class JsonLdReader(Reader):
     def findOntologyProperties(self, o):
         keys = []
         try:
-            for key in o.keys():
+            for key in list(o.keys()):
                 if key in self.ontologyproperties:
                     keys.append(key)
         except:
@@ -401,7 +401,7 @@ class JsonLdReader(Reader):
 
             # print 'found %s branches' % len(found)
             if len(found) == 0:
-                print 'branch not found for %r' % jsonld_graph
+                print('branch not found for %r' % jsonld_graph)
                 raise self.DataDoesNotMatchGraphException()
 
             # if len(self.findOntologyProperties(jsonld_graph)) == 0:

@@ -67,8 +67,8 @@ def fix_v3_value(value, datatype):
             shortenedpath = fullpath.replace(filename, shortname)
 
         if not os.path.isfile(fullpath) and not os.path.isfile(shortenedpath):
-            print "expected file doesn't exist: {}".format(fullpath)
-            print "all files must be transferred before migration can continue"
+            print("expected file doesn't exist: {}".format(fullpath))
+            print("all files must be transferred before migration can continue")
             exit()
 
         if shortenedpath != "":
@@ -84,8 +84,8 @@ def fix_v3_value(value, datatype):
         try:
             file_obj.save()
         except Exception as e:
-            print "Error saving file: {}".format(fullpath)
-            print e
+            print("Error saving file: {}".format(fullpath))
+            print(e)
             exit()
 
         # construct the full json needed to define a file-list node in a tile
@@ -159,8 +159,8 @@ def add_wkt_to_geojson_collection(wkt, collection):
             "properties": {}
         }
     except Exception as e:
-        print "Error parsing this WKT: {}".format(wkt)
-        print e
+        print("Error parsing this WKT: {}".format(wkt))
+        print(e)
         feature = False
 
     if feature:
@@ -215,7 +215,7 @@ def duplicate_tile_json(tilejson):
         "data": {},
         "tileid": uuid.uuid4(),
     }
-    for k in tilejson['data'].keys():
+    for k in list(tilejson['data'].keys()):
         newtile['data'][k] = None
 
     return newtile
@@ -228,8 +228,8 @@ def get_nodegroup_tilegroup(v4_node_name, nodes, resource_id, verbose=False):
     ng_tile = Tile().get_blank_tile(v4_node.nodegroup_id, resourceid=resource_id)
 
     if verbose:
-        print "  ", ng_tile.data
-        print "  ", ng_tile.tiles
+        print("  ", ng_tile.data)
+        print("  ", ng_tile.tiles)
 
     # if there are child tiles, then the ng_tile.tileid needs to be set
     # (not sure why this is the case, but it is)
@@ -325,7 +325,7 @@ class v3PreparedResource:
         not have a value """
 
         for tile in self.tiles:
-            data = dict([(k, v) for k, v in tile['data'].items() if v is not None])
+            data = dict([(k, v) for k, v in list(tile['data'].items()) if v is not None])
             tile['data'] = data
 
     def put_primary_name_last(self):
@@ -365,18 +365,18 @@ class v3PreparedResource:
 
         if verbose:
             if not ct_total == ct_geom:
-                print "{} {} - (total) (geom flattened) - {}".format(ct_total,
-                                                                     ct_geom, self.resourceid)
+                print("{} {} - (total) (geom flattened) - {}".format(ct_total,
+                                                                     ct_geom, self.resourceid))
             for i in resource_data:
-                print i
-            print "resource_data full length", len(resource_data)
+                print(i)
+            print("resource_data full length", len(resource_data))
 
         # begin looping though the v3 resource data list
         while len(resource_data):
             if verbose:
-                print "\nSTARTING WHILE LOOP ---"
-                print "resource_data current length", len(resource_data)
-                print "first in line:", resource_data[0][0], node_lookup[resource_data[0][0]]['v4_uuid']
+                print("\nSTARTING WHILE LOOP ---")
+                print("resource_data current length", len(resource_data))
+                print("first in line:", resource_data[0][0], node_lookup[resource_data[0][0]]['v4_uuid'])
 
             # get the v4 name of the first node in the resource list
             v4_name = node_lookup[resource_data[0][0]]['v4_name']
@@ -388,7 +388,7 @@ class v3PreparedResource:
             # get a list of all the node UUIDs in this tile and its children
             all_node_options = []
             for t in tilegroup_json:
-                all_node_options += t['data'].keys()
+                all_node_options += list(t['data'].keys())
 
             # begin iterating resource_data, and trying to fill tile['data'] values
             # in the current tile group. if a node in the iteration doesn't fit
@@ -396,13 +396,13 @@ class v3PreparedResource:
             # and restart the while loop to get the next tile group. remove any
             # nodes from resource_data whose value has been placed in a tile.
             if verbose:
-                print "number of tiles in tilegroup:", len(tilegroup_json)
-                print "\nSTARTING FOR LOOP ---"
+                print("number of tiles in tilegroup:", len(tilegroup_json))
+                print("\nSTARTING FOR LOOP ---")
             used = []
             for index, dp in enumerate(resource_data):
 
                 if verbose:
-                    print dp[0]
+                    print(dp[0])
                 dt = node_lookup[dp[0]]['v4_datatype']
 
                 # first fix the data value
@@ -415,17 +415,17 @@ class v3PreparedResource:
                 # if this node is not in the current tile group
                 if v4_uuid not in all_node_options:
                     if verbose:
-                        print "<< breaking the loop because this node is not in the current tilegroup >>"
+                        print("<< breaking the loop because this node is not in the current tilegroup >>")
                     break
 
                 # first check if the node for this data has already been
                 # populated, in which case a new ng tilegroup is needed
                 if verbose:
-                    print "    is this node already filled? >",
+                    print("    is this node already filled? >", end=' ')
                 skip = False
                 if v4_uuid in all_node_options:
                     for tile in tilegroup_json:
-                        if v4_uuid in tile['data'].keys():
+                        if v4_uuid in list(tile['data'].keys()):
                             if not tile['data'][v4_uuid] is None and not dt == "concept-list":
                                 ng = NodeGroup.objects.get(nodegroupid=tile['nodegroup_id'])
                                 if ng.parentnodegroup_id is None and ng.cardinality != "n":
@@ -433,25 +433,25 @@ class v3PreparedResource:
 
                 if skip:
                     if verbose:
-                        print "yes"
-                        print "<< breaking the loop because this node already has data in the current tilegroup >>"
+                        print("yes")
+                        print("<< breaking the loop because this node already has data in the current tilegroup >>")
                     break
                 else:
                     if verbose:
-                        print "no"
+                        print("no")
 
                 # find the tile that will hold the value
                 for tile in tilegroup_json:
 
                     # skip if the node is not in this tile
-                    if v4_uuid not in tile['data'].keys():
+                    if v4_uuid not in list(tile['data'].keys()):
                         continue
 
                     # if this is a concept-list node, assume the value should
                     # be appended to the existing concept-list value, if extant
                     if dt == "concept-list":
                         if verbose:
-                            print tile['data'][v4_uuid], "="*60
+                            print(tile['data'][v4_uuid], "="*60)
                         # set value
                         if isinstance(tile['data'][v4_uuid], list):
                             tile['data'][v4_uuid].append(value)
@@ -478,16 +478,16 @@ class v3PreparedResource:
                             tileid_used = tile['tileid']
                     used.append(index)
                     if verbose:
-                        print "    placing value into tile:", tileid_used, 'nodeid -->',
-                        print v4_uuid, node_lookup[dp[0]]['v4_name']
+                        print("    placing value into tile:", tileid_used, 'nodeid -->', end=' ')
+                        print(v4_uuid, node_lookup[dp[0]]['v4_name'])
                     break
 
             if verbose:
-                print "removing used nodes:", used
-                print "resource_data len before:", len(resource_data)
+                print("removing used nodes:", used)
+                print("resource_data len before:", len(resource_data))
             resource_data = [v for i, v in enumerate(resource_data) if i not in used]
             if verbose:
-                print "resource_data len after:", len(resource_data)
+                print("resource_data len after:", len(resource_data))
 
             # append the tile group to self.tiles
             self.tiles += tilegroup_json
@@ -646,7 +646,7 @@ class v3SkosConverter:
         """
 
         output_graph = RDFGraph()
-        [output_graph.bind(k, v) for k, v in namespaces.items()]
+        [output_graph.bind(k, v) for k, v in list(namespaces.items())]
 
         [output_graph.parse(
             data=etree.tostring(node),
@@ -686,7 +686,7 @@ class v3SkosConverter:
             clobbering the same attribute on the existing Concept
             """
             working = json.loads(preflabel.text)
-            working['id'] = unicode(uuid.uuid4())
+            working['id'] = str(uuid.uuid4())
             preflabel.text = json.dumps(working)
 
         if uuid_collection_file:

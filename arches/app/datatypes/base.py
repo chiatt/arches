@@ -256,7 +256,7 @@ class BaseDataType(object):
         """
         Returns a list of concept values for a given node
         """
-        return unicode(tile.data[str(node.nodeid)])
+        return str(tile.data[str(node.nodeid)])
 
     def get_search_terms(self, nodevalue, nodeid=None):
         """
@@ -317,5 +317,5 @@ class BaseDataType(object):
         return g
 
     def from_rdf(self, json_ld_node):
-        print json_ld_node
+        print(json_ld_node)
         raise NotImplementedError
