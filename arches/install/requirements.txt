@@ -1,4 +1,4 @@
-Django==1.11.15
+Django==2.0
 psycopg2-binary==2.7.4
 elasticsearch>=6.0.0,<7.0.0
 rdflib==4.2.2
@@ -9,11 +9,11 @@ TileStache==1.51.13
 python-memcached==1.59
 lxml==4.2.5
 mapbox-vector-tile==1.2.0
-mapnik==0.1
+#mapnik==0.1
 SPARQLWrapper==1.8.2
 django-recaptcha==1.4.0
 python-jose==2.0.2
-edtf==2.7.0
+edtf==3.0.0
 couchdb==1.2
 django-revproxy==0.9.15
 django-cors-headers==2.2.0

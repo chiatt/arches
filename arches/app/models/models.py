@@ -45,8 +45,8 @@ class CardModel(models.Model):
     helpenabled = models.BooleanField(default=False)
     helptitle = models.TextField(blank=True, null=True)
     helptext = models.TextField(blank=True, null=True)
-    nodegroup = models.ForeignKey('NodeGroup', db_column='nodegroupid')
-    graph = models.ForeignKey('GraphModel', db_column='graphid')
+    nodegroup = models.ForeignKey('NodeGroup', on_delete=models.PROTECT, db_column='nodegroupid')
+    graph = models.ForeignKey('GraphModel', on_delete=models.PROTECT, db_column='graphid')
     active = models.BooleanField(default=True)
     visible = models.BooleanField(default=True)
     sortorder = models.IntegerField(blank=True, null=True, default=None)
@@ -69,7 +69,7 @@ class CardModel(models.Model):
 class ConstraintModel(models.Model):
     constraintid = models.UUIDField(primary_key=True, default=uuid.uuid1)
     uniquetoallinstances = models.BooleanField(default=False)
-    card = models.ForeignKey('CardModel', db_column='cardid')
+    card = models.ForeignKey('CardModel', on_delete=models.PROTECT, db_column='cardid')
     nodes = models.ManyToManyField(to='Node', through='ConstraintXNode')
 
     class Meta:
@@ -106,9 +106,9 @@ class CardComponent(models.Model):
 
 class CardXNodeXWidget(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid1)
-    node = models.ForeignKey('Node', db_column='nodeid')
-    card = models.ForeignKey('CardModel', db_column='cardid')
-    widget = models.ForeignKey('Widget', db_column='widgetid')
+    node = models.ForeignKey('Node', on_delete=models.PROTECT, db_column='nodeid')
+    card = models.ForeignKey('CardModel', on_delete=models.PROTECT, db_column='cardid')
+    widget = models.ForeignKey('Widget', on_delete=models.PROTECT, db_column='widgetid')
     config = JSONField(blank=True, null=True, db_column='config')
     label = models.TextField(blank=True, null=True)
     visible = models.BooleanField(default=True)
@@ -122,7 +122,7 @@ class CardXNodeXWidget(models.Model):
 
 class Concept(models.Model):
     conceptid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    nodetype = models.ForeignKey('DNodeType', db_column='nodetype')
+    nodetype = models.ForeignKey('DNodeType', on_delete=models.PROTECT, db_column='nodetype')
     legacyoid = models.TextField(unique=True)
 
     class Meta:
@@ -134,7 +134,7 @@ class DDataType(models.Model):
     iconclass = models.TextField()
     modulename = models.TextField(blank=True, null=True)
     classname = models.TextField(blank=True, null=True)
-    defaultwidget = models.ForeignKey(db_column='defaultwidget', to='models.Widget', null=True)
+    defaultwidget = models.ForeignKey(db_column='defaultwidget', on_delete=models.PROTECT, to='models.Widget', null=True)
     defaultconfig = JSONField(blank=True, null=True, db_column='defaultconfig')
     configcomponent = models.TextField(blank=True, null=True)
     configname = models.TextField(blank=True, null=True)
@@ -194,9 +194,9 @@ class Edge(models.Model):
     name = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     ontologyproperty = models.TextField(blank=True, null=True)
-    domainnode = models.ForeignKey('Node', db_column='domainnodeid', related_name='edge_domains')
-    rangenode = models.ForeignKey('Node', db_column='rangenodeid', related_name='edge_ranges')
-    graph = models.ForeignKey('GraphModel', db_column='graphid', blank=True, null=True)
+    domainnode = models.ForeignKey('Node', on_delete=models.PROTECT, db_column='domainnodeid', related_name='edge_domains')
+    rangenode = models.ForeignKey('Node', on_delete=models.PROTECT, db_column='rangenodeid', related_name='edge_ranges')
+    graph = models.ForeignKey('GraphModel', on_delete=models.PROTECT, db_column='graphid', blank=True, null=True)
 
     class Meta:
         managed = True
@@ -393,11 +393,12 @@ class GraphModel(models.Model):
     iconclass = models.TextField(blank=True, null=True)
     color = models.TextField(blank=True, null=True)
     subtitle = models.TextField(blank=True, null=True)
-    ontology = models.ForeignKey('Ontology', db_column='ontologyid', related_name='graphs', null=True, blank=True)
+    ontology = models.ForeignKey('Ontology', on_delete=models.PROTECT, db_column='ontologyid', related_name='graphs', null=True, blank=True)
     functions = models.ManyToManyField(to='Function', through='FunctionXGraph')
     jsonldcontext = models.TextField(blank=True, null=True)
     template = models.ForeignKey(
         'ReportTemplate',
+        on_delete=models.PROTECT,
         db_column='templateid',
         default='50000000-0000-0000-0000-000000000001'
     )
@@ -443,7 +444,7 @@ class NodeGroup(models.Model):
     nodegroupid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
     legacygroupid = models.TextField(blank=True, null=True)
     cardinality = models.TextField(blank=True, default='1')
-    parentnodegroup = models.ForeignKey('self', db_column='parentnodegroupid', blank=True, null=True)  #Allows nodegroups within nodegroups
+    parentnodegroup = models.ForeignKey('self', on_delete=models.PROTECT, db_column='parentnodegroupid', blank=True, null=True)  #Allows nodegroups within nodegroups
 
     class Meta:
         managed = True
@@ -470,8 +471,8 @@ class Node(models.Model):
     istopnode = models.BooleanField()
     ontologyclass = models.TextField(blank=True, null=True)
     datatype = models.TextField()
-    nodegroup = models.ForeignKey(NodeGroup, db_column='nodegroupid', blank=True, null=True)
-    graph = models.ForeignKey(GraphModel, db_column='graphid', blank=True, null=True)
+    nodegroup = models.ForeignKey(NodeGroup, on_delete=models.PROTECT, db_column='nodegroupid', blank=True, null=True)
+    graph = models.ForeignKey(GraphModel, on_delete=models.PROTECT, db_column='graphid', blank=True, null=True)
     config = JSONField(blank=True, null=True, db_column='config')
     issearchable = models.BooleanField(default=True)
     isrequired = models.BooleanField(default=False)
@@ -524,7 +525,7 @@ class Ontology(models.Model):
     name = models.TextField()
     version = models.TextField()
     path = models.FileField(storage=get_ontology_storage_system())
-    parentontology = models.ForeignKey('Ontology', db_column='parentontologyid', related_name='extensions', null=True, blank=True)
+    parentontology = models.ForeignKey('Ontology', on_delete=models.PROTECT, db_column='parentontologyid', related_name='extensions', null=True, blank=True)
 
     class Meta:
         managed = True
@@ -571,7 +572,7 @@ class OntologyClass(models.Model):
     ontologyclassid = models.UUIDField(default=uuid.uuid1, primary_key=True)
     source = models.TextField()
     target = JSONField(null=True)
-    ontology = models.ForeignKey('Ontology', db_column='ontologyid', related_name='ontologyclasses')
+    ontology = models.ForeignKey('Ontology', on_delete=models.PROTECT, db_column='ontologyid', related_name='ontologyclasses')
 
     class Meta:
         managed = True
@@ -580,9 +581,9 @@ class OntologyClass(models.Model):
 
 
 class Relation(models.Model):
-    conceptfrom = models.ForeignKey(Concept, db_column='conceptidfrom', related_name='relation_concepts_from')
-    conceptto = models.ForeignKey(Concept, db_column='conceptidto', related_name='relation_concepts_to')
-    relationtype = models.ForeignKey(DRelationType, db_column='relationtype')
+    conceptfrom = models.ForeignKey(Concept, on_delete=models.PROTECT, db_column='conceptidfrom', related_name='relation_concepts_from')
+    conceptto = models.ForeignKey(Concept, on_delete=models.PROTECT, db_column='conceptidto', related_name='relation_concepts_to')
+    relationtype = models.ForeignKey(DRelationType, on_delete=models.PROTECT, db_column='relationtype')
     relationid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
 
     class Meta:
@@ -611,8 +612,8 @@ class ReportTemplate(models.Model):
 
 class Resource2ResourceConstraint(models.Model):
     resource2resourceid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    resourceclassfrom = models.ForeignKey(Node, db_column='resourceclassfrom', blank=True, null=True, related_name='resxres_contstraint_classes_from')
-    resourceclassto = models.ForeignKey(Node, db_column='resourceclassto', blank=True, null=True, related_name='resxres_contstraint_classes_to')
+    resourceclassfrom = models.ForeignKey(Node, on_delete=models.PROTECT, db_column='resourceclassfrom', blank=True, null=True, related_name='resxres_contstraint_classes_from')
+    resourceclassto = models.ForeignKey(Node, on_delete=models.PROTECT, db_column='resourceclassto', blank=True, null=True, related_name='resxres_contstraint_classes_to')
 
     class Meta:
         managed = True
@@ -621,8 +622,8 @@ class Resource2ResourceConstraint(models.Model):
 
 class ResourceXResource(models.Model):
     resourcexid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    resourceinstanceidfrom = models.ForeignKey('ResourceInstance', db_column='resourceinstanceidfrom', blank=True, null=True, related_name='resxres_resource_instance_ids_from')
-    resourceinstanceidto = models.ForeignKey('ResourceInstance', db_column='resourceinstanceidto', blank=True, null=True, related_name='resxres_resource_instance_ids_to')
+    resourceinstanceidfrom = models.ForeignKey('ResourceInstance', on_delete=models.PROTECT, db_column='resourceinstanceidfrom', blank=True, null=True, related_name='resxres_resource_instance_ids_from')
+    resourceinstanceidto = models.ForeignKey('ResourceInstance', on_delete=models.PROTECT, db_column='resourceinstanceidto', blank=True, null=True, related_name='resxres_resource_instance_ids_to')
     notes = models.TextField(blank=True, null=True)
     relationshiptype = models.TextField(blank=True, null=True)
     datestarted = models.DateField(blank=True, null=True)
@@ -653,7 +654,7 @@ class ResourceXResource(models.Model):
 
 class ResourceInstance(models.Model):
     resourceinstanceid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    graph = models.ForeignKey(GraphModel, db_column='graphid')
+    graph = models.ForeignKey(GraphModel, on_delete=models.PROTECT, db_column='graphid')
     legacyid = models.TextField(blank=True, unique=True, null=True)
     createdtime = models.DateTimeField(auto_now_add=True)
 
@@ -726,10 +727,10 @@ class TileModel(models.Model):  # Tile
     """
 
     tileid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    resourceinstance = models.ForeignKey(ResourceInstance, db_column='resourceinstanceid')
-    parenttile = models.ForeignKey('self', db_column='parenttileid', blank=True, null=True)
+    resourceinstance = models.ForeignKey(ResourceInstance, on_delete=models.PROTECT, db_column='resourceinstanceid')
+    parenttile = models.ForeignKey('self', on_delete=models.PROTECT, db_column='parenttileid', blank=True, null=True)
     data = JSONField(blank=True, null=True, db_column='tiledata')  # This field type is a guess.
-    nodegroup = models.ForeignKey(NodeGroup, db_column='nodegroupid')
+    nodegroup = models.ForeignKey(NodeGroup, on_delete=models.PROTECT, db_column='nodegroupid')
     sortorder = models.IntegerField(blank=True, null=True, default=0)
     provisionaledits = JSONField(blank=True, null=True, db_column='provisionaledits')  # This field type is a guess.
 
@@ -748,10 +749,10 @@ class TileModel(models.Model):  # Tile
 
 class Value(models.Model):
     valueid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    concept = models.ForeignKey('Concept', db_column='conceptid')
-    valuetype = models.ForeignKey(DValueType, db_column='valuetype')
+    concept = models.ForeignKey('Concept', on_delete=models.PROTECT, db_column='conceptid')
+    valuetype = models.ForeignKey(DValueType, on_delete=models.PROTECT, db_column='valuetype')
     value = models.TextField()
-    language = models.ForeignKey(DLanguage, db_column='languageid', blank=True, null=True)
+    language = models.ForeignKey(DLanguage, on_delete=models.PROTECT, db_column='languageid', blank=True, null=True)
 
     class Meta:
         managed = True
@@ -760,10 +761,10 @@ class Value(models.Model):
 
 class FileValue(models.Model):
     valueid = models.UUIDField(primary_key=True, default=uuid.uuid1)  # This field type is a guess.
-    concept = models.ForeignKey('Concept', db_column='conceptid')
-    valuetype = models.ForeignKey('DValueType', db_column='valuetype')
+    concept = models.ForeignKey('Concept', on_delete=models.PROTECT, db_column='conceptid')
+    valuetype = models.ForeignKey('DValueType', on_delete=models.PROTECT, db_column='valuetype')
     value = models.FileField(upload_to='concepts')
-    language = models.ForeignKey('DLanguage', db_column='languageid', blank=True, null=True)
+    language = models.ForeignKey('DLanguage', on_delete=models.PROTECT, db_column='languageid', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -902,8 +903,8 @@ class TileserverLayer(models.Model):
     name = models.TextField(primary_key=True, unique=True)
     path = models.TextField()
     config = JSONField()
-    map_layer = models.ForeignKey('MapLayer', db_column='map_layerid')
-    map_source = models.ForeignKey('MapSource', db_column='map_sourceid')
+    map_layer = models.ForeignKey('MapLayer', on_delete=models.PROTECT, db_column='map_layerid')
+    map_source = models.ForeignKey('MapSource', on_delete=models.PROTECT, db_column='map_sourceid')
 
     def __unicode__(self):
         return self.name
@@ -915,7 +916,7 @@ class TileserverLayer(models.Model):
 
 class GraphXMapping(models.Model):
     id = models.UUIDField(primary_key=True, serialize=False, default=uuid.uuid1)
-    graph = models.ForeignKey('GraphModel', db_column='graphid')
+    graph = models.ForeignKey('GraphModel', on_delete=models.PROTECT, db_column='graphid')
     mapping = JSONField(blank=True, null=False)
 
     class Meta:
@@ -954,8 +955,8 @@ class MobileSurveyModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid1)
     name = models.TextField(null=True)
     active = models.BooleanField(default=False)
-    createdby = models.ForeignKey(User, related_name='createdby')
-    lasteditedby = models.ForeignKey(User, related_name='lasteditedby')
+    createdby = models.ForeignKey(User, on_delete=models.PROTECT, related_name='createdby')
+    lasteditedby = models.ForeignKey(User, on_delete=models.PROTECT, related_name='lasteditedby')
     users = models.ManyToManyField(to=User, through='MobileSurveyXUser')
     groups = models.ManyToManyField(to=Group, through='MobileSurveyXGroup')
     cards = models.ManyToManyField(to=CardModel, through='MobileSurveyXCard')
