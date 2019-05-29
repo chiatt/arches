@@ -26,5 +26,6 @@ class SearchEngineFactory(object):
         components = backend.split('.')
         classname = components[len(components)-1]
         modulename = ('.').join(components[0:len(components)-1])
-        _temp = __import__(modulename, globals(), locals(), [classname], -1)
+        _temp = __import__(modulename, globals(), locals(), [classname])
+        # there was a -1 as the last parameter for __import__ that I took out
         return getattr(_temp, classname)()
