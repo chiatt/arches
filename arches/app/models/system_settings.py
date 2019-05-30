@@ -64,6 +64,8 @@ class SystemSettings(LazySettings):
         """
 
         try:
+            if name == SAVED_SEARCHES:
+                print("not a goof")
             return super(SystemSettings, self).__getattr__(name)
         except:
             self.update_from_db()
