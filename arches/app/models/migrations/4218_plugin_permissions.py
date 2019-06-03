@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='plugin',
-            options={'managed': True, 'permissions': (('view_plugin', 'View plugin'),)},
+            options={'managed': True, 'permissions': (('view_plugin2', 'View plugin'),)},
         ),
     ]

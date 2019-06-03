@@ -402,7 +402,7 @@ class GraphModel(models.Model):
         db_column='templateid',
         default='50000000-0000-0000-0000-000000000001'
     )
-    config = JSONField(db_column='config', default={})
+    config = JSONField(db_column='config', default=dict)
     slug = models.TextField(validators=[validate_slug], unique=True, null=True)
 
     @property
@@ -1051,5 +1051,5 @@ class Plugin(models.Model):
         managed = True
         db_table = 'plugins'
         permissions = (
-            ('view_plugin', 'View plugin'),
+            ('view_plugin2', 'View plugin'),
         )

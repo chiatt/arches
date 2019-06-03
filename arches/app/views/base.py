@@ -37,7 +37,7 @@ class BaseManagerView(TemplateView):
         context['graphs'] = '[]'
         context['plugins'] = []
         for plugin in models.Plugin.objects.all().order_by('sortorder'):
-            if self.request.user.has_perm('view_plugin', plugin):
+            if self.request.user.has_perm('view_plugin2', plugin):
                 context['plugins'].append(plugin)
         context['createable_resources'] = JSONSerializer().serialize(
             get_createable_resource_types(self.request.user),

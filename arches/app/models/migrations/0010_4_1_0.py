@@ -21,6 +21,9 @@ def forwards_func(apps, schema_editor):
 def reverse_func(apps, schema_editor):
     pass
 
+def dictionary_for_jsonfield_in_line237():
+    return {"download": false, "count": 1000, "resources": [], "custom": null}
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -231,7 +234,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='mobilesurveymodel',
             name='datadownloadconfig',
-            field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, default='{"download":false, "count":1000, "resources":[], "custom":null}', null=True),
+            field=django.contrib.postgres.fields.jsonb.JSONField(blank=True, default=dictionary_for_jsonfield_in_line237, null=True),
         ),
         migrations.RemoveField(
             model_name='mobilesurveymodel',
