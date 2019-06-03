@@ -950,6 +950,8 @@ class UserProfile(models.Model):
         managed = True
         db_table = 'user_profile'
 
+def dictionary_for_jsonfield_in_line971():
+    return {"download":False, "count":100, "resources":[], "custom": None}
 
 class MobileSurveyModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid1)
@@ -966,7 +968,10 @@ class MobileSurveyModel(models.Model):
     bounds = models.MultiPolygonField(null=True)
     tilecache = models.TextField(null=True)
     onlinebasemaps = JSONField(blank=True, null=True, db_column='onlinebasemaps')
-    datadownloadconfig = JSONField(blank=True, null=True, default='{"download":false, "count":100, "resources":[], "custom":null}')
+    datadownloadconfig = JSONField(blank=True, null=True, default=dictionary_for_jsonfield_in_line971)
+
+    def dictionary_for_jsonfield_in_line969():
+        return {"download":False, "count":100, "resources":[], "custom":null}
 
     def __unicode__(self):
         return self.name
