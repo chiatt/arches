@@ -33,7 +33,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
 
     def get_user_from_token(self, token):
         decoded_json = jws.verify(token, settings.JWT_KEY, algorithms=[settings.JWT_ALGORITHM])
-        decoded_dict = JSONDeserializer .deserialize(decoded_json)
+        decoded_dict = JSONDeserializer().deserialize(decoded_json)
 
         username = decoded_dict.get('username', None)
         expiration = decoded_dict.get('expiration', None)
@@ -42,14 +42,14 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         try:
             user = User.objects.get(username=username)
             if not user.is_active:
-                raise Exception
+                raise Exception()
         except:
             raise AuthenticationFailed(_('User inactive or deleted.\n\n'))
 
-        if int(expiration) < int(time.time):
+        if int(expiration) < int(time.time()):
             raise AuthenticationFailed(_('Token Expired.\n\n'))
 
-        return user or AnonymousUser
+        return user or AnonymousUser()
 
     def process_request(self, request):
         assert hasattr(request, 'token'), (

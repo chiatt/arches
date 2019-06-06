@@ -166,7 +166,7 @@ class JSONSerializer(object):
             if exclude and property_name in exclude:
                 continue
             data[property_name] = self.handle_object(getattr(instance, property_name))
-        for f in chain(opts.concrete_fields, opts.virtual_fields, opts.many_to_many):
+        for f in chain(opts.concrete_fields, opts.many_to_many):
             if not getattr(f, 'editable', False):
                 continue
             if fields and f.name not in fields:
@@ -188,6 +188,8 @@ class JSONSerializer(object):
                 else:
                     # MultipleChoiceWidget needs a list of pks, not object instances.
                     qs = f.value_from_object(instance)
+                    import ipdb
+                    ipdb.set_trace()
                     if qs._result_cache is not None:
                         data[f.name] = [item.pk for item in qs]
                     else:

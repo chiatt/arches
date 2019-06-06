@@ -6,7 +6,7 @@ from arches.management.commands import utils
 
 postgres_version = subprocess.check_output(["psql", "--version"])
 pattern = re.compile(r'\s\d+.\d*.\d*')
-matches = pattern.findall(postgres_version)
+matches = pattern.findall(postgres_version.decode('utf-8'))
 psqlversionmatch = matches[0]
 split = (psqlversionmatch.split('.'))  # major[9].minor[2].patch[0]
 
