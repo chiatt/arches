@@ -55,8 +55,9 @@ except ImportError:
 class SearchView(MapBaseManagerView):
 
     def get(self, request):
-        import ipdb
-        ipdb.set_trace()
+        # getting_serialized = {'catdog': None, 'x': 3}
+        # print(JSONSerializer().serialize(getting_serialized))
+        print(settings.SAVED_SEARCHES)
         saved_searches = JSONSerializer().serialize(settings.SAVED_SEARCHES)
         map_layers = models.MapLayer.objects.all()
         map_markers = models.MapMarker.objects.all()

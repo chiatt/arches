@@ -44,6 +44,8 @@ class JSONSerializer(object):
         self.exclude = options.pop("exclude", None)
         self.use_natural_keys = options.pop("use_natural_keys", False)
         self.geom_format = options.pop("geom_format", "wkt")
+        # import ipdb
+        # ipdb.set_trace()
         return self.handle_object(obj, self.selected_fields, self.exclude)
 
     def serialize(self, obj, **options):
@@ -56,6 +58,8 @@ class JSONSerializer(object):
         sort_keys = options.pop("sort_keys", True)
         options.pop("fields", None)
         options.pop("exclude", None)
+        # import ipdb
+        # ipdb.set_trace()
         return json.dumps(obj, cls=DjangoJSONEncoder, sort_keys=sort_keys, **options.copy())
 
 
@@ -125,7 +129,7 @@ class JSONSerializer(object):
         obj = {}
         for key, value in d.items():
             try:
-                #print key + ': ' + str(type(value))
+                #print(key + ': ' + str(type(value)))
                 obj[str(key)] = self.handle_object(value)
             except(UnableToSerializeMethodTypesError):
                 pass

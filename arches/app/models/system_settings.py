@@ -42,7 +42,9 @@ class SystemSettings(LazySettings):
 
     def __init__(self, *args, **kwargs):
         super(SystemSettings, self).__init__(*args, **kwargs)
-        #print self
+        print('initted mapbox sprites: {}'.format(self.MAPBOX_SPRITES))
+        print('internal settings dict: {}'.format(self.__dict__))
+        #print('getting mabox sprites from wrapped obj: {}'.format(self.__dict__['_wrapped'].MAPBOX_SPRITES))
 
     def __str__(self):
         ret = []
@@ -69,8 +71,8 @@ class SystemSettings(LazySettings):
             return super(SystemSettings, self).__getattr__(name)
         except:
             self.update_from_db()
-            import ipdb
-            ipdb.set_trace()
+            #import ipdb
+            #ipdb.set_trace()
             return super(SystemSettings, self).__getattr__(name) #getattr(self, name, True)
 
     def update_from_db(self, **kwargs):

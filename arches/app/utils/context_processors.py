@@ -19,6 +19,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import json
 from arches import __version__
 from arches.app.models.system_settings import settings
+print('imported mapbox sprites: {}'.format(settings.MAPBOX_SPRITES))
+print(settings)
 from arches.app.utils.geo_utils import GeoUtils
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 
@@ -38,6 +40,11 @@ def map_info(request):
     else:
         hex_bin_bounds = (0, 0, 1, 1)
         default_center = {'coordinates': [6.602384, 0.245926]}  # an island off the coast of Africa
+    # import ipdb
+    # ipdb.set_trace()
+    print(default_center['coordinates'])
+    print('settings.DEFAULT_MAP_ZOOM: {}'.format(settings.DEFAULT_MAP_ZOOM))
+    print('settings.MAPBOX_SPRITES: {}'.format(settings.MAPBOX_SPRITES))
     return {
         'map_info': {
             'x': default_center['coordinates'][0],
