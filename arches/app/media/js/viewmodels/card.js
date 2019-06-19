@@ -1,4 +1,3 @@
-console.log('testing console');
 define([
     'jquery',
     'underscore',
@@ -20,7 +19,6 @@ define([
     *
     * @param  {string} params - a configuration object
     */
-    console.log('testing console');
     var isChildSelected = function(parent) {
         var childSelected = false;
         var children = [];
@@ -53,7 +51,6 @@ define([
 
     var updateDisplayName = function(resourceId, displayname) {
         $.get(
-            console.log('testing console');
             arches.urls.resource_descriptors + resourceId(),
             function(descriptors) {
                 displayname(descriptors.displayname);
@@ -63,7 +60,6 @@ define([
 
 
     var CardViewModel = function(params) {
-        console.log("2");
         var TileViewModel = require('viewmodels/tile');
         var self = this;
         var hover = params.hover || ko.observable();
@@ -218,7 +214,6 @@ define([
                 var nodegroup = _.find(ko.unwrap(nodegroups), function(group) {
                     return ko.unwrap(group.nodegroupid) === ko.unwrap(card.nodegroup_id);
                 });
-                console.log(nodegroup);
                 return ko.unwrap(nodegroup.parentnodegroup_id) === ko.unwrap(params.card.nodegroup_id);
             }).map(function(card) {
                 return new CardViewModel({
