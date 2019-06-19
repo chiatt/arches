@@ -50,6 +50,7 @@ class JSONSerializer(object):
 
     def serialize(self, obj, **options):
         obj = self.serializeToPython(obj, **options)
+        # print(obj)
         # prevent raw strings from begin re-encoded
         # this is especially important when doing bulk operations in elasticsearch
         if (isinstance(obj, str)):
@@ -148,58 +149,24 @@ class JSONSerializer(object):
     # a slighty modified version of django.forms.models.model_to_dict
     def handle_model(self, instance, fields=None, exclude=None):
         """
-        Returns a dict containing the data in ``instance`` suitable for passing as
+        Return a dict containing the data in ``instance`` suitable for passing as
         a Form's ``initial`` keyword argument.
-
-        ``fields`` is an optional list of field names. If provided, only the named
-        fields will be included in the returned dict.
-
-        ``exclude`` is an optional list of field names. If provided, the named
-        fields will be excluded from the returned dict, even if they are listed in
-        the ``fields`` argument.
+        ``fields`` is an optional list of field names. If provided, return only the
+        named.
+        ``exclude`` is an optional list of field names. If provided, exclude the
+        named from the returned dict, even if they are listed in the ``fields``
+        argument.
         """
-        # avoid a circular import
-        from django.db.models.fields.related import ManyToManyField, ForeignKey
         opts = instance._meta
         data = {}
-        #print '='*40
-        properties = [k for k,v in instance.__class__.__dict__.items() if type(v) is property]
-        for property_name in properties:
-            if fields and property_name not in fields:
-                continue
-            if exclude and property_name in exclude:
-                continue
-            data[property_name] = self.handle_object(getattr(instance, property_name))
-        for f in chain(opts.concrete_fields, opts.many_to_many):
+        for f in chain(opts.concrete_fields, opts.private_fields, opts.many_to_many):
             if not getattr(f, 'editable', False):
                 continue
             if fields and f.name not in fields:
                 continue
             if exclude and f.name in exclude:
                 continue
-            if isinstance(f, ForeignKey):
-                # Emulate the naming convention used by django when accessing the
-                # related model's id field
-                # see https://github.com/django/django/blob/master/django/db/models/fields/__init__.py
-                val = getattr(instance, f.attname, None)
-                data[f.attname] = val
-            elif isinstance(f, ManyToManyField):
-                # If the object doesn't have a primary key yet, just use an empty
-                # list for its m2m fields. Calling f.value_from_object will raise
-                # an exception.
-                if instance.pk is None:
-                    data[f.name] = []
-                else:
-                    # MultipleChoiceWidget needs a list of pks, not object instances.
-                    qs = f.value_from_object(instance)
-                    import ipdb
-                    ipdb.set_trace()
-                    if qs._result_cache is not None:
-                        data[f.name] = [item.pk for item in qs]
-                    else:
-                        data[f.name] = list(qs.values_list('pk', flat=True))
-            else:
-                data[f.name] = self.handle_object(f.value_from_object(instance))
+            data[f.name] = f.value_from_object(instance)
         return data
 
 

@@ -19,8 +19,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 import json
 from arches import __version__
 from arches.app.models.system_settings import settings
-print('imported mapbox sprites: {}'.format(settings.MAPBOX_SPRITES))
-print(settings)
+# print('imported mapbox sprites: {}'.format(settings.MAPBOX_SPRITES))
+# print(settings)
 from arches.app.utils.geo_utils import GeoUtils
 from arches.app.utils.betterJSONSerializer import JSONSerializer, JSONDeserializer
 

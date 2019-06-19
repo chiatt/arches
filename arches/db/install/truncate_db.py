@@ -19,10 +19,10 @@ if len(split) < 3:  # e.g 9.1 > 9.1.0
 
 def create_sqlfile(database_settings, path_to_file):
     context = Context(database_settings)
-    if (split[0] >= 9) & (split[1] >= 2) & (split[2] >= 0):  # 9.2.0 or above
-        context['PID'] = "pid"
-    else:
-        context['PID'] = "procpid"
+    #if (split[0] >= 9) & (split[1] >= 2) & (split[2] >= 0):  # 9.2.0 or above
+    context['PID'] = "pid"
+    # else:
+    #     context['PID'] = "procpid"
 
     t = Template(
         "SELECT pg_terminate_backend({{ PID }}) from pg_stat_activity where datname='{{ NAME }}';\n"

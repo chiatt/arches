@@ -169,7 +169,7 @@ class NewResourceEditorView(MapBaseManagerView):
         editable_nodegroup_ids = [str(nodegroup.pk) for nodegroup in editable_nodegroups]
         for card in cards:
             card['is_writable'] = False
-            if str(card['nodegroup_id']) in editable_nodegroup_ids:
+            if str(card['nodegroup']) in editable_nodegroup_ids:
                 card['is_writable'] = True
 
         context = self.get_context_data(
@@ -203,6 +203,7 @@ class NewResourceEditorView(MapBaseManagerView):
             graph_json=JSONSerializer().serialize(graph),
             is_system_settings=is_system_settings
         )
+        #print(graph_json)
 
         context['nav']['title'] = ''
         context['nav']['menu'] = nav_menu

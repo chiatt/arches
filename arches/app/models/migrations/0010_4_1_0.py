@@ -22,7 +22,7 @@ def reverse_func(apps, schema_editor):
     pass
 
 def dictionary_for_jsonfield_in_line237():
-    return {"download": false, "count": 1000, "resources": [], "custom": null}
+    return {"download": False, "count": 1000, "resources": [], "custom": None}
 
 class Migration(migrations.Migration):
 
