@@ -318,7 +318,7 @@ class GraphDataView(View):
             else:
                 if graphid is not None:
                     graph = Graph.objects.get(graphid=graphid)
-                data = JSONDeserializer().deserialize(request.body)
+                data = JSONDeserializer().deserialize((request.body).decode('utf-8'))
 
                 if self.action == 'new_graph':
                     isresource = data['isresource'] if 'isresource' in data else False

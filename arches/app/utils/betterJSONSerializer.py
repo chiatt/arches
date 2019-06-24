@@ -9,6 +9,7 @@ from itertools import chain
 from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Model
 from django.db.models.query import QuerySet
+from django.db.models.fields.related import ManyToManyField, ForeignKey
 from django.utils.encoding import smart_text
 from django.core.serializers.python import Serializer as PythonSerializer
 from django.core.serializers.python import Deserializer as PythonDeserializer
@@ -16,6 +17,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import model_to_dict
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.files import File
+
 
 class UnableToSerializeError(Exception):
     """ Error for not implemented classes """
@@ -166,7 +168,28 @@ class JSONSerializer(object):
                 continue
             if exclude and f.name in exclude:
                 continue
-            data[f.name] = f.value_from_object(instance)
+            if isinstance(f, ForeignKey):
+                # Emulate the naming convention used by django when accessing the
+                # related model's id field
+                # see https://github.com/django/django/blob/master/django/db/models/fields/__init__.py
+                val = getattr(instance, f.attname, None)
+                data[f.attname] = val
+            # elif isinstance(f, ManyToManyField):
+            #     # If the object doesn't have a primary key yet, just use an empty
+            #     # list for its m2m fields. Calling f.value_from_object will raise
+            #     # an exception.
+            #     if instance.pk is None:
+            #         data[f.name] = []
+            #     else:
+            #         # MultipleChoiceWidget needs a list of pks, not object instances.
+            #         qs = f.value_from_object(instance)
+            #         if qs._result_cache is not None:
+            #             data[f.name] = [item.pk for item in qs]
+            #         else:
+            #             data[f.name] = list(qs.values_list('pk', flat=True))
+            else:
+                data[f.name] = self.handle_object(f.value_from_object(instance))
+            #data[f.name] = f.value_from_object(instance)
         return data
 
 

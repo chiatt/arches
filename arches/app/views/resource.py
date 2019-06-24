@@ -164,12 +164,16 @@ class NewResourceEditorView(MapBaseManagerView):
         map_sources = models.MapSource.objects.all()
         geocoding_providers = models.Geocoder.objects.all()
         templates = models.ReportTemplate.objects.all()
-
+        print(cards)
         cards = JSONSerializer().serializeToPython(cards)
+        print("after serialization: ")
+        print(cards)
+        # import ipdb
+        # ipdb.set_trace()
         editable_nodegroup_ids = [str(nodegroup.pk) for nodegroup in editable_nodegroups]
         for card in cards:
             card['is_writable'] = False
-            if str(card['nodegroup']) in editable_nodegroup_ids:
+            if str(card['nodegroup_id']) in editable_nodegroup_ids: #nodegroup_id -> nodegroup
                 card['is_writable'] = True
 
         context = self.get_context_data(
