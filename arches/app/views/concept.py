@@ -430,7 +430,7 @@ def add_concepts_from_sparql_endpoint(request, conceptid):
             try:
                 parentconcept.subconcepts = provider.get_concepts(data['ids'])
             except Exception as e:
-                return HttpResponseServerError(e.message)
+                return HttpResponseServerError(e)
 
             for subconcept in parentconcept.subconcepts:
                 subconcept.relationshiptype = relationshiptype

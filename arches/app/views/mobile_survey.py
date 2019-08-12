@@ -122,7 +122,7 @@ class MobileSurveyManagerView(BaseManagerView):
                     if 'strerror' in e and e.strerror == 'Connection refused' or 'Connection refused' in e:
                         error_message = _("Unable to connect to CouchDB")
                     else:
-                        error_message = e.message
+                        error_message = e
                     connection_error = JSONResponse({'success': False, 'message': error_message, 'title': error_title}, status=500)
                 return connection_error
 
@@ -244,7 +244,7 @@ class MobileSurveyDesignerView(MapBaseManagerView):
                 if 'strerror' in e and e.strerror == 'Connection refused' or 'Connection refused' in e:
                     error_message = _("Unable to connect to CouchDB")
                 else:
-                    error_message = e.message
+                    error_message = e
                 connection_error = JSONResponse({'success': False, 'message': error_message, 'title': error_title}, status=500)
             return connection_error
 
@@ -351,7 +351,7 @@ class MobileSurveyDesignerView(MapBaseManagerView):
                 if 'strerror' in e and e.strerror == 'Connection refused' or 'Connection refused' in e:
                     error_message = _("Unable to connect to CouchDB")
                 else:
-                    error_message = e.message
+                    error_message = e
                 connection_error = JSONResponse({'success': False, 'message': error_message, 'title': error_title}, status=500)
             return connection_error
 

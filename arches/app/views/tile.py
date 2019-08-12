@@ -67,7 +67,7 @@ class TileData(View):
             if hasattr(e, 'message') and e.message:
                 message += ": {0}".format(e.message)
         else:
-            message = str(e)
+            message = str(e.message)
 
         logger.error(title +
                      ''' [Tile id: {tile_id}] \

@@ -319,11 +319,21 @@ def build_search_results_dsl(request):
 
     if export != None:
         limit = settings.SEARCH_EXPORT_ITEMS_PER_PAGE
+        print("HERE'S WHAT LIMIT IS SET TO IF: ")
+        print(limit)
     elif mobile_download != None:
         limit = request.GET['resourcecount']
+        print("HERE'S WHAT LIMIT IS SET TO ELIF: ")
+        print(limit)
     else:
         limit = settings.SEARCH_ITEMS_PER_PAGE
-    limit = int(request.GET.get('limit', limit))
+        print("HERE'S WHAT LIMIT IS SET TO ELSE: ")
+        print(limit)
+    limit_number = request.GET.get('limit', limit)
+    if limit_number != None:
+        limit = int(limit_number)
+    else:
+        limit = 0
 
     query = Query(se, start=limit*int(page-1), limit=limit)
     search_query = Bool()
