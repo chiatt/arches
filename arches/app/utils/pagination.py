@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 
 def get_paginator(request, results, total_count, page, count_per_page):
+    print(count_per_page,'HELLO')
     paginator = Paginator(list(range(total_count)), count_per_page)
     pages = [page]
     if paginator.num_pages > 1:

@@ -144,6 +144,7 @@ def search_terms(request):
 
     query.add_query(boolquery)
     base_agg = Aggregation(name='value_agg', type='terms', field='value.raw', size=settings.SEARCH_DROPDOWN_LENGTH, order={"max_score": "desc"})
+    print('????',settings)
     nodegroupid_agg = Aggregation(name='nodegroupid', type='terms', field='nodegroupid')
     top_concept_agg = Aggregation(name='top_concept', type='terms', field='top_concept')
     conceptid_agg = Aggregation(name='conceptid', type='terms', field='conceptid')
@@ -232,13 +233,16 @@ def search_results(request):
 
     results = dsl.search(index='resources')
 
+
+
     if results is not None:
         user_is_reviewer = request.user.groups.filter(name='Resource Reviewer').exists()
         total = results['hits']['total']
         page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
-
+        print(settings,"MAYBE?")
         paginator, pages = get_paginator(request, results, total, page, settings.SEARCH_ITEMS_PER_PAGE)
         page = paginator.page(page)
+
 
         # only reuturn points and geometries a user is allowed to view
         geojson_nodes = get_nodegroups_by_datatype_and_perm(request, 'geojson-feature-collection', 'read_nodegroup')
@@ -270,7 +274,6 @@ def search_results(request):
         ret['paginator']['end_index'] = page.end_index()
         ret['paginator']['pages'] = pages
         ret['reviewer'] = user_is_reviewer
-
         return JSONResponse(ret)
     else:
         return HttpResponseNotFound(_("There was an error retrieving the search results"))
