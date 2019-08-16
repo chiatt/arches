@@ -16,7 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 '''
 
-
 import csv
 from datetime import datetime
 from django.shortcuts import render
@@ -57,7 +56,6 @@ class SearchView(MapBaseManagerView):
     def get(self, request):
         # getting_serialized = {'catdog': None, 'x': 3}
         # print(JSONSerializer().serialize(getting_serialized))
-        print(settings.SAVED_SEARCHES)
         saved_searches = JSONSerializer().serialize(settings.SAVED_SEARCHES)
         map_layers = models.MapLayer.objects.all()
         map_markers = models.MapMarker.objects.all()
@@ -233,13 +231,10 @@ def search_results(request):
 
     results = dsl.search(index='resources')
 
-
-
     if results is not None:
         user_is_reviewer = request.user.groups.filter(name='Resource Reviewer').exists()
         total = results['hits']['total']
         page = 1 if request.GET.get('page') == '' else int(request.GET.get('page', 1))
-        print(settings,"MAYBE?")
         paginator, pages = get_paginator(request, results, total, page, settings.SEARCH_ITEMS_PER_PAGE)
         page = paginator.page(page)
 

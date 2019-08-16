@@ -970,9 +970,6 @@ class MobileSurveyModel(models.Model):
     onlinebasemaps = JSONField(blank=True, null=True, db_column='onlinebasemaps')
     datadownloadconfig = JSONField(blank=True, null=True, default=dictionary_for_jsonfield_in_line971)
 
-    def dictionary_for_jsonfield_in_line969():
-        return {"download":False, "count":100, "resources":[], "custom":null}
-
     def __unicode__(self):
         return self.name
 

@@ -77,6 +77,7 @@ class JSONSerializer(object):
         # print inspect.isroutine(object)
         # print inspect.isabstract(object)
         # print type(object) == 'staticmethod'
+        object = object.decode('utf-8')
         if (inspect.isroutine(object) or
             inspect.isbuiltin(object) or
             inspect.isclass(object)):
@@ -125,6 +126,7 @@ class JSONSerializer(object):
             else:
                 return self.handle_dictionary(object.__dict__)
         else:
+            print("THIS IS WHAT OBJECT IS: ", object)
             raise UnableToSerializeError(type(object))
 
     def handle_dictionary(self, d):
