@@ -113,7 +113,9 @@ def create_mapping_configuration_file(graphid, include_concepts=True, data_dir=N
             node_query = Node.objects.filter(graph_id__isresource=True).exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID).order_by('name')
         else:
             node_query = Node.objects.filter(graph_id=graphid).exclude(datatype='semantic').order_by('name')
-
+        print("THIS IS NODE_QUERY: ", node_query)
+        print("THIS IS NODE_QUERY[0]: ", node_query[0])
+        print("THIS IS NODE_QUERY[0].GRAPH_ID:", node_query[0].graph_id)
         export_json['resource_model_id'] = str(node_query[0].graph_id)
         export_json['resource_model_name'] = JSONSerializer().serializeToPython(Graph.objects.filter(graphid=export_json['resource_model_id']))[0]['name']
         export_json['nodes'] = []

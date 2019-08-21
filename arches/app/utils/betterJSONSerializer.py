@@ -77,7 +77,7 @@ class JSONSerializer(object):
         # print inspect.isroutine(object)
         # print inspect.isabstract(object)
         # print type(object) == 'staticmethod'
-        object = object.decode('utf-8')
+        #object = object.decode('utf-8')
         if (inspect.isroutine(object) or
             inspect.isbuiltin(object) or
             inspect.isclass(object)):
@@ -184,11 +184,11 @@ class JSONSerializer(object):
             #         data[f.name] = []
             #     else:
             #         # MultipleChoiceWidget needs a list of pks, not object instances.
-            #         qs = f.value_from_object(instance)
-            #         if qs._result_cache is not None:
-            #             data[f.name] = [item.pk for item in qs]
-            #         else:
-            #             data[f.name] = list(qs.values_list('pk', flat=True))
+            #     qs = f.value_from_object(instance)
+            #     if qs._result_cache is not None:
+            #       data[f.name] = [item.pk for item in qs]
+            #     else:
+            #       data[f.name] = list(qs.values_list('pk', flat=True))
             else:
                 data[f.name] = self.handle_object(f.value_from_object(instance))
             #data[f.name] = f.value_from_object(instance)
