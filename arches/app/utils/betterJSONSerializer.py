@@ -125,6 +125,12 @@ class JSONSerializer(object):
                 return getattr(object, 'serialize')()
             else:
                 return self.handle_dictionary(object.__dict__)
+        elif isinstance(object, bytes):
+            if hasattr(object, 'serialize'):
+                return getattr(object, 'serialize')()
+            # else:
+            #     print("THIS IS WHAT OBJECT IS: ", object)
+            #     raise UnableToSerializeError(type(object))
         else:
             print("THIS IS WHAT OBJECT IS: ", object)
             raise UnableToSerializeError(type(object))

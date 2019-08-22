@@ -44,9 +44,9 @@ from guardian.shortcuts import assign_perm, get_perms, remove_perm, get_group_pe
 from rdflib import Graph as RDFGraph
 
 try:
-    from io import StringIO
+    from io import BytesIO
 except ImportError:
-    from io import StringIO
+    from io import BytesIO
 
 
 def get_ontology_namespaces():
@@ -263,7 +263,7 @@ class GraphDataView(View):
             files_for_export = create_mapping_configuration_file(graphid, True)
             file_name = Graph.objects.get(graphid=graphid).name
 
-            buffer = StringIO()
+            buffer = BytesIO()
 
             with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as zip:
                 for f in files_for_export:

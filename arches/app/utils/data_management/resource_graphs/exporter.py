@@ -110,8 +110,10 @@ def create_mapping_configuration_file(graphid, include_concepts=True, data_dir=N
     export_json = OrderedDict()
     if graphid != False:
         if graphid == None or graphid == 'all' or graphid == ['']:
+            print("THIS IS WHAT NODE_QUERY IS GRAPHID IS NONE OR ALL OR EMPTY LIST: ", Node.objects.filter(graph_id__isresource=True).exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID).order_by('name'))
             node_query = Node.objects.filter(graph_id__isresource=True).exclude(pk=settings.SYSTEM_SETTINGS_RESOURCE_MODEL_ID).order_by('name')
         else:
+            print("THIS IS WHAT NODE_QUERY IS ELSE: ", Node.objects.filter(graph_id=graphid).exclude(datatype='semantic').order_by('name'))
             node_query = Node.objects.filter(graph_id=graphid).exclude(datatype='semantic').order_by('name')
         print("THIS IS NODE_QUERY: ", node_query)
         print("THIS IS NODE_QUERY[0]: ", node_query[0])
