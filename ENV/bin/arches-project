@@ -1,7 +1,0 @@
-#!/Users/angiewong/arches/ENV/bin/python2.7
-# EASY-INSTALL-DEV-SCRIPT: 'arches==4.4.1','arches-project'
-__requires__ = 'arches==4.4.1'
-__import__('pkg_resources').require('arches==4.4.1')
-__file__ = '/Users/angiewong/arches/arches/install/arches-project'
-with open(__file__) as f:
-    exec(compile(f.read(), __file__, 'exec'))
